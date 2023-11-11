@@ -19,13 +19,19 @@ class FormulaAST {
 public:
     explicit FormulaAST(std::unique_ptr<ASTImpl::Expr> root_expr,
                         std::forward_list<Position> cells);
+    
     FormulaAST(FormulaAST&&) = default;
+    
     FormulaAST& operator=(FormulaAST&&) = default;
+    
     ~FormulaAST();
 
-    double Execute(/*добавьте нужные аргументы*/ args) const;
+    double Execute(const std::function<CellInterface::Value(Position)>& args) const;
+    
     void PrintCells(std::ostream& out) const;
+    
     void Print(std::ostream& out) const;
+    
     void PrintFormula(std::ostream& out) const;
 
     std::forward_list<Position>& GetCells() {
@@ -46,4 +52,5 @@ private:
 };
 
 FormulaAST ParseFormulaAST(std::istream& in);
+
 FormulaAST ParseFormulaAST(const std::string& in_str);
