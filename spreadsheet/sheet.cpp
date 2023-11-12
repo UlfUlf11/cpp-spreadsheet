@@ -14,42 +14,33 @@ Sheet::~Sheet() {}
 
 void Sheet::SetCell(Position pos, std::string text)
 {
-    if (pos.IsValid())
-    {
-        auto sheet_pos = pos.ToString();
+    CheckValidity(pos);
 
-        cells_.resize(std::max(pos.row + 1, int(std::size(cells_))));
-        cells_[pos.row].resize(std::max(pos.col + 1, int(std::size(cells_[pos.row]))));
+    auto sheet_pos = pos.ToString();
 
-        if (!cells_[pos.row][pos.col])
-        {
-            cells_[pos.row][pos.col] = std::make_unique<Cell>(*this);
-        }
-        cells_[pos.row][pos.col]->Set(std::move(text), pos, this);
-    }
-    else
+    cells_.resize(std::max(pos.row + 1, int(std::size(cells_))));
+    cells_[pos.row].resize(std::max(pos.col + 1, int(std::size(cells_[pos.row]))));
+
+    if (cells_[pos.row][pos.col] == nullptr)
     {
-        throw InvalidPositionException("invalid position");
+        cells_[pos.row][pos.col] = std::make_unique<Cell>(*this);
     }
+    
+    cells_[pos.row][pos.col]->Set(std::move(text), pos, this);
 }
 
 
 CellInterface* Sheet::GetCell(Position pos)
 {
-    if (pos.IsValid())
+    CheckValidity(pos);
+
+    if (pos.row < int(std::size(cells_)) && pos.col < int(std::size(cells_[pos.row])))
     {
-        if (pos.row < int(std::size(cells_)) && pos.col < int(std::size(cells_[pos.row])))
-        {
-            return cells_[pos.row][pos.col].get();
-        }
-        else
-        {
-            return nullptr;
-        }
+        return cells_[pos.row][pos.col].get();
     }
     else
     {
-        throw InvalidPositionException("invalid position");
+        return nullptr;
     }
 }
 
@@ -121,7 +112,7 @@ void Sheet::ClearCell(Position pos)
             if (cells_[pos.row][pos.col])
             {
                 cells_[pos.row][pos.col]->Clear();
-                
+
                 if (!cells_[pos.row][pos.col]->IsReferenced())
                 {
                     cells_[pos.row][pos.col].reset();
@@ -228,7 +219,7 @@ CellInterface::Value Sheet::GetValue(Position pos) const
     }
 
     const auto* cell =GetCell(pos);
-    
+
     if (!cell)
     {
         return 0.0;
@@ -241,4 +232,13 @@ CellInterface::Value Sheet::GetValue(Position pos) const
 std::unique_ptr<SheetInterface> CreateSheet()
 {
     return std::make_unique<Sheet>();
+}
+
+
+void Sheet::CheckValidity(const Position pos)
+{
+    if (!pos.IsValid())
+    {
+        throw InvalidPositionException("invalid position");
+    }
 }

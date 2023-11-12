@@ -15,6 +15,9 @@ class ParsingError : public std::runtime_error {
     using std::runtime_error::runtime_error;
 };
 
+
+using EvaluateFunctor = std::function<CellInterface::Value(Position)>;
+
 class FormulaAST {
 public:
     explicit FormulaAST(std::unique_ptr<ASTImpl::Expr> root_expr,
@@ -26,7 +29,7 @@ public:
     
     ~FormulaAST();
 
-    double Execute(const std::function<CellInterface::Value(Position)>& args) const;
+    double Execute(const EvaluateFunctor& args) const;
     
     void PrintCells(std::ostream& out) const;
     

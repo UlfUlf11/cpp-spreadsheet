@@ -35,6 +35,8 @@ public:
     void PrintTexts(std::ostream& output) const override;
 
     CellInterface::Value GetValue(Position pos) const;
+    
+    void CheckValidity(const Position pos);
 
 private:
     std::vector<std::vector<std::unique_ptr<Cell>>> cells_;

@@ -41,7 +41,7 @@ void Cell::Set(std::string text, Position pos, Sheet* sheet)
 
     impl_ = std::move(impl);
 
-    InvalidateCache(true);
+    InvalidateCache();
 }
 
 
@@ -128,9 +128,9 @@ bool Cell::IsReferenced() const
 }
 
 
-void Cell::InvalidateCache(bool reset)
+void Cell::InvalidateCache()
 {
-    if (impl_->HasCache() || reset)
+    if (impl_->HasCache())
     {
         impl_->InvalidateCellCache();
 

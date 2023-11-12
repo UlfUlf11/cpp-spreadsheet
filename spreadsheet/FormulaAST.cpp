@@ -158,7 +158,7 @@ public:
         }
     }
 
-    double Evaluate(const std::function<CellInterface::Value(Position)>& args) const override
+    double Evaluate(const EvaluateFunctor& args) const override
     {
         switch (type_)
         {
@@ -229,7 +229,7 @@ public:
         return EP_UNARY;
     }
 
-    double Evaluate(const std::function<CellInterface::Value(Position)>& args) const override
+    double Evaluate(const EvaluateFunctor& args) const override
     {
         switch (type_)
         {
@@ -254,7 +254,10 @@ private:
 bool IsNum(const std::string& s)
 {
     std::string::const_iterator it = s.begin();
-    while (it != s.end() && std::isdigit(*it)) ++it;
+    
+    while (it != s.end() && std::isdigit(*it)) {
+        ++it;
+    } 
     return !s.empty() && it == s.end();
 }
 
@@ -289,7 +292,7 @@ public:
         return EP_ATOM;
     }
 
-    double Evaluate(const std::function<CellInterface::Value(Position)>& args) const override
+    double Evaluate(const EvaluateFunctor& args) const override
     {
         CellInterface::Value value = args(*cell_);
 
@@ -346,7 +349,7 @@ public:
         return EP_ATOM;
     }
 
-    double Evaluate(const std::function<CellInterface::Value(Position)>& args) const override
+    double Evaluate(const EvaluateFunctor& args) const override
     {
         return value_;
     }
@@ -529,7 +532,7 @@ void FormulaAST::PrintFormula(std::ostream& out) const
     root_expr_->PrintFormula(out, ASTImpl::EP_ATOM);
 }
 
-double FormulaAST::Execute(const std::function<CellInterface::Value(Position)>& args) const
+double FormulaAST::Execute(const EvaluateFunctor& args) const
 {
     return root_expr_->Evaluate(args);
 }

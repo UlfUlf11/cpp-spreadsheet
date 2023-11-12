@@ -25,7 +25,7 @@ public:
 
     bool CheckCircularDependency(const std::vector<Position>& referencedCells) const;
     bool IsReferenced() const;
-    void InvalidateCache(bool reset = false);
+    void InvalidateCache();
 
 private:
     class Impl;
